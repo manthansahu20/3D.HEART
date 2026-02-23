@@ -2,20 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Heart Animation | @coding.stella</title>
+  <title>3D Heart | Manthan</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
     body {
       margin: 0;
       overflow: hidden;
-    }
-
-    .controls {
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 1;
+      background: black;
     }
 
     canvas {
@@ -36,13 +30,14 @@
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.136.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.136.0/examples/js/controls/OrbitControls.js"></script>
-<script src="https://unpkg.co/gsap@3/dist/gsap.min.js"></script>
+<script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
 
 <script>
 console.clear();
 
 /* SETUP */
 const scene = new THREE.Scene();
+
 const camera = new THREE.PerspectiveCamera(
   75,
   window.innerWidth / window.innerHeight,
@@ -51,13 +46,13 @@ const camera = new THREE.PerspectiveCamera(
 );
 camera.position.z = 500;
 
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(window.devicePixelRatio > 1 ? 2 : 1);
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 /* CONTROLS */
-const controlsWebGL = new THREE.OrbitControls(camera, renderer.domElement);
+new THREE.OrbitControls(camera, renderer.domElement);
 
 /* PARTICLES */
 const tl = gsap.timeline({
@@ -69,7 +64,7 @@ const path = document.querySelector("path");
 const length = path.getTotalLength();
 const vertices = [];
 
-for (let i = 0; i < length; i += 0.1) {
+for (let i = 0; i < length; i += 0.5) {
   const point = path.getPointAtLength(i);
   const vector = new THREE.Vector3(point.x, -point.y, 0);
 
@@ -80,17 +75,16 @@ for (let i = 0; i < length; i += 0.1) {
   vertices.push(vector);
 
   tl.from(vector, {
-      x: 600 / 2,
-      y: -552 / 2,
-      z: 0,
-      ease: "power2.inOut",
-      duration: "random(2, 5)"
-    },
-    i * 0.002
-  );
+    x: 300,
+    y: -276,
+    z: 0,
+    ease: "power2.inOut",
+    duration: "random(2,5)"
+  }, i * 0.002);
 }
 
 const geometry = new THREE.BufferGeometry().setFromPoints(vertices);
+
 const material = new THREE.PointsMaterial({
   color: 0xee5282,
   blending: THREE.AdditiveBlending,
@@ -99,38 +93,34 @@ const material = new THREE.PointsMaterial({
 
 const particles = new THREE.Points(geometry, material);
 
-particles.position.x -= 600 / 2;
-particles.position.y += 552 / 2;
+particles.position.x -= 300;
+particles.position.y += 276;
 
 scene.add(particles);
 
-gsap.fromTo(scene.rotation, {
-  y: -0.2
-}, {
-  y: 0.2,
+gsap.to(scene.rotation, {
+  y: 0.4,
   repeat: -1,
   yoyo: true,
   ease: "power2.inOut",
   duration: 3
 });
 
-/* RENDERING */
+/* RENDER LOOP */
 function render() {
   requestAnimationFrame(render);
   geometry.setFromPoints(vertices);
   renderer.render(scene, camera);
 }
 
-/* EVENTS */
-function onWindowResize() {
+render();
+
+/* RESIZE */
+window.addEventListener("resize", () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
-}
-
-window.addEventListener("resize", onWindowResize, false);
-
-requestAnimationFrame(render);
+});
 </script>
 
 </body>
