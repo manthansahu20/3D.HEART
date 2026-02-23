@@ -1,15 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
   <meta charset="UTF-8">
-  <title>3D Heart | Manthan</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+  <title>Heart Animation | @coding.stella</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body {
       margin: 0;
       overflow: hidden;
-      background: black;
+    }
+
+    .controls {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
     }
 
     canvas {
@@ -25,19 +30,18 @@
 <body>
 
 <svg viewBox="0 0 600 552">
-  <path d="M300,107.77C284.68,55.67,239.76,0,162.31,0,64.83,0,0,82.08,0,171.71c0,.48,0,.95,0,1.43-.52,19.5,0,217.94,299.87,379.69v0l0,0,.05,0,0,0,0,0v0C600,391.08,600.48,192.64,600,173.14c0-.48,0-.95,0-1.43C600,82.08,535.17,0,437.69,0,360.24,55.67,315.32,55.67,300,107.77" fill="#ee5282"/>
+  <path d="M300,107.77C284.68,55.67,239.76,0,162.31,0,64.83,0,0,82.08,0,171.71c0,.48,0,.95,0,1.43-.52,19.5,0,217.94,299.87,379.69v0l0,0,.05,0,0,0,0,0v0C600,391.08,600.48,192.64,600,173.14c0-.48,0-.95,0-1.43C600,82.08,535.17,0,437.69,0,360.24,0,315.32,55.67,300,107.77" fill="#ee5282"/>
 </svg>
 
-<script src="https://cdn.jsdelivr.net/npm/three@0.136.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.136.0/examples/js/controls/OrbitControls.js"></script>
-<script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
+<script src='https://cdn.jsdelivr.net/npm/three@0.136.0/build/three.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/three@0.136.0/examples/js/controls/OrbitControls.js'></script>
+<script src='https://unpkg.co/gsap@3/dist/gsap.min.js'></script>
 
 <script>
 console.clear();
 
 /* SETUP */
 const scene = new THREE.Scene();
-
 const camera = new THREE.PerspectiveCamera(
   75,
   window.innerWidth / window.innerHeight,
@@ -46,15 +50,16 @@ const camera = new THREE.PerspectiveCamera(
 );
 camera.position.z = 500;
 
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+const renderer = new THREE.WebGLRenderer();
 renderer.setPixelRatio(window.devicePixelRatio > 1 ? 2 : 1);
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 /* CONTROLS */
-new THREE.OrbitControls(camera, renderer.domElement);
+const controlsWebGL = new THREE.OrbitControls(camera, renderer.domElement);
 
 /* PARTICLES */
+// Create a global gsap timeline that contains all tweens
 const tl = gsap.timeline({
   repeat: -1,
   yoyo: true
@@ -64,7 +69,7 @@ const path = document.querySelector("path");
 const length = path.getTotalLength();
 const vertices = [];
 
-for (let i = 0; i < length; i += 0.5) {
+for (let i = 0; i < length; i += 0.1) {
   const point = path.getPointAtLength(i);
   const vector = new THREE.Vector3(point.x, -point.y, 0);
 
@@ -75,12 +80,14 @@ for (let i = 0; i < length; i += 0.5) {
   vertices.push(vector);
 
   tl.from(vector, {
-    x: 300,
-    y: -276,
-    z: 0,
-    ease: "power2.inOut",
-    duration: "random(2,5)"
-  }, i * 0.002);
+      x: 600 / 2,
+      y: -552 / 2,
+      z: 0,
+      ease: "power2.inOut",
+      duration: "random(2, 5)"
+    },
+    i * 0.002
+  );
 }
 
 const geometry = new THREE.BufferGeometry().setFromPoints(vertices);
@@ -93,34 +100,38 @@ const material = new THREE.PointsMaterial({
 
 const particles = new THREE.Points(geometry, material);
 
-particles.position.x -= 300;
-particles.position.y += 276;
+particles.position.x -= 600 / 2;
+particles.position.y += 552 / 2;
 
 scene.add(particles);
 
-gsap.to(scene.rotation, {
-  y: 0.4,
+gsap.fromTo(scene.rotation, {
+  y: -0.2
+}, {
+  y: 0.2,
   repeat: -1,
   yoyo: true,
-  ease: "power2.inOut",
+  ease: 'power2.inOut',
   duration: 3
 });
 
-/* RENDER LOOP */
+/* RENDERING */
 function render() {
   requestAnimationFrame(render);
   geometry.setFromPoints(vertices);
   renderer.render(scene, camera);
 }
 
-render();
-
-/* RESIZE */
-window.addEventListener("resize", () => {
+/* EVENTS */
+function onWindowResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
-});
+}
+
+window.addEventListener("resize", onWindowResize, false);
+
+requestAnimationFrame(render);
 </script>
 
 </body>
