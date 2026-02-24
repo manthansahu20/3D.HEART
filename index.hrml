@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>❤️ 3D Heart Collection</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body{
+            height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            flex-direction:column;
+            background: linear-gradient(135deg,#0f0c29,#302b63,#24243e);
+            color:white;
+            text-align:center;
+        }
+
+        h1{
+            font-size:32px;
+            margin-bottom:40px;
+            letter-spacing:2px;
+        }
+
+        .container{
+            display:flex;
+            gap:30px;
+            flex-wrap:wrap;
+            justify-content:center;
+        }
+
+        .card{
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding:30px 40px;
+            border-radius:20px;
+            cursor:pointer;
+            transition:0.3s ease;
+            border:1px solid rgba(255,255,255,0.2);
+        }
+
+        .card:hover{
+            transform:scale(1.1);
+            background: rgba(255,255,255,0.2);
+        }
+
+        .card h2{
+            margin-bottom:10px;
+        }
+
+        .card p{
+            font-size:14px;
+            opacity:0.8;
+        }
+
+        footer{
+            position:absolute;
+            bottom:20px;
+            font-size:14px;
+            opacity:0.7;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>❤️ Choose Your Heart Animation ❤️</h1>
+
+    <div class="container">
+
+        <div class="card" onclick="location.href='animated.html'">
+            <h2>💖 Animated Heart</h2>
+            <p>Beautiful rotating 3D animation</p>
+        </div>
+
+        <div class="card" onclick="location.href='glowing.html'">
+            <h2>🔥 Glowing Heart</h2>
+            <p>Stylish glowing effect animation</p>
+        </div>
+
+    </div>
+
+    <footer>
+        Made with ❤️ by Manthan
+    </footer>
+
+</body>
+</html>
